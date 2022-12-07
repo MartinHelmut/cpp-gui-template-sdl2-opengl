@@ -197,8 +197,10 @@ class InstrumentationTimer {
 #define APP_PROFILE_BEGIN_SESSION_WITH_FILE(name, file_path) \
   ::App::Debug::Instrumentor::get().begin_session(name, file_path)
 #define APP_PROFILE_END_SESSION() ::App::Debug::Instrumentor::get().end_session()
-#define APP_PROFILE_SCOPE(name) \
-  ::App::Debug::InstrumentationTimer JOIN(timer, __LINE__) { name }
+#define APP_PROFILE_SCOPE(name)                                    \
+  const ::App::Debug::InstrumentationTimer JOIN(timer, __LINE__) { \
+    name                                                           \
+  }
 #define APP_PROFILE_FUNCTION() APP_PROFILE_SCOPE(APP_FUNC_SIG)
 #else
 #define APP_PROFILE_BEGIN_SESSION(name)

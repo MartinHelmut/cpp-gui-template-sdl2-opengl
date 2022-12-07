@@ -15,9 +15,9 @@ Log::Log() {
   std::vector<spdlog::sink_ptr> log_sinks;
 
 #ifdef TRACE
-  spdlog::level::level_enum level{spdlog::level::trace};
+  const spdlog::level::level_enum level{spdlog::level::trace};
 #else
-  spdlog::level::level_enum level{spdlog::level::debug};
+  const spdlog::level::level_enum level{spdlog::level::debug};
 #endif
 
   log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
