@@ -2,6 +2,8 @@
 
 C++ gui project template with SDL2 and OpenGL 4.1.
 
+![Image of the example app.](example-app.png)
+
 ## Setup
 
 The project uses [CMake](https://cmake.org) and [Ninja](https://ninja-build.org).
