@@ -5,12 +5,14 @@ include(cmake/AppleBuild.cmake)
 project(
   BasicGuiProjectSetupSDL2OpenGL
   DESCRIPTION "Base gui project setup with SDL2 and OpenGL."
+  VERSION 1.0.0
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/StandardProjectSettings.cmake)
+include(GNUInstallDirs)
 
 # Link this "library" to use the warnings specified in CompilerWarnings.cmake
 add_library(project_warnings INTERFACE)
@@ -19,3 +21,7 @@ set_project_warnings(project_warnings)
 
 add_subdirectory(vendor)
 add_subdirectory(src)
+
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  add_subdirectory(packaging)
+endif ()

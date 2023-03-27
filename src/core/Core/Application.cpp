@@ -10,6 +10,7 @@
 #include <imgui.h>
 
 #include "Core/Instrumentor.hpp"
+#include "Core/Resources.hpp"
 
 namespace App {
 
@@ -178,13 +179,13 @@ void Application::set_theme() const {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable |
                     ImGuiConfigFlags_ViewportsEnable;
 
-  // ImGui font
+  // ImGUI font
   const float font_scaling_factor{m_window->get_scale()};
   const float font_size{18.0F * font_scaling_factor};
+  const std::string font_path{Resources::font_path("Manrope.ttf")};
 
-  io.Fonts->AddFontFromFileTTF("assets/fonts/Manrope/Manrope-Regular.ttf", font_size);
-  io.FontDefault =
-      io.Fonts->AddFontFromFileTTF("assets/fonts/Manrope/Manrope-Regular.ttf", font_size);
+  io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);
+  io.FontDefault = io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);
   io.FontGlobalScale = 1.0F / font_scaling_factor;
 
   style.WindowRounding = 5.3F;

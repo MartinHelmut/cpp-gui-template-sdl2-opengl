@@ -5,10 +5,22 @@ include(${PROJECT_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 add_library(${NAME} STATIC
   Core/Log.cpp Core/Log.hpp Core/Instrumentor.hpp
   Core/Application.cpp Core/Application.hpp
-  Core/Window.cpp Core/Window.hpp)
+  Core/Window.cpp Core/Window.hpp
+  Core/Resources.hpp)
 
-target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+# Define set of OS specific files to include
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  target_sources(${NAME} PRIVATE Platform/WindowsResources.cpp)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  target_sources(${NAME} PRIVATE Platform/MacResources.cpp)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_sources(${NAME} PRIVATE Platform/LinuxResources.cpp)
+endif ()
+
+target_include_directories(${NAME}
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CEF_ROOT} ${CEF_ROOT}/include)
+
 target_compile_features(${NAME} PRIVATE cxx_std_20)
 target_link_libraries(${NAME}
-  PRIVATE project_warnings
-  PUBLIC spdlog SDL2::SDL2 glad imgui)
+  PRIVATE project_warnings libcef_dll_wrapper ${CEF_STANDARD_LIBS}
+  PUBLIC spdlog SDL2::SDL2-static glad imgui)
