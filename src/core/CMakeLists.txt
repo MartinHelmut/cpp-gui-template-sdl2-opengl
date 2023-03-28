@@ -23,4 +23,4 @@ target_include_directories(${NAME}
 target_compile_features(${NAME} PRIVATE cxx_std_20)
 target_link_libraries(${NAME}
   PRIVATE project_warnings libcef_dll_wrapper ${CEF_STANDARD_LIBS}
-  PUBLIC spdlog SDL2::SDL2-static glad imgui)
+  PUBLIC spdlog SDL2::SDL2 glad imgui)

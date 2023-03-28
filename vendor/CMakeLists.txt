@@ -23,8 +23,8 @@ add_subdirectory(glad)
 
 FetchContent_Declare(
   imgui
-  GIT_REPOSITORY "https://github.com/ocornut/imgui.git"
-  GIT_TAG c191faf0ba478e9c58a69c63306986a21ebfb6e4 # docking-latest
+  GIT_REPOSITORY "https://github.com/andgeno/imgui-cef-patched.git"
+  GIT_TAG docking-with-cef
 )
 add_subdirectory(imgui)
 

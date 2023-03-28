@@ -17,6 +17,12 @@ namespace App {
 Application::Application(const std::string& title) {
   APP_PROFILE_FUNCTION();
 
+  // Setup CEF
+  const int cef_result{ImGui_ImplSDL2_CefInit(0, nullptr)};
+  if (cef_result >= 0) {
+    return;
+  }
+
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
     APP_ERROR("Error: %s\n", SDL_GetError());
     m_exit_status = ExitStatus::FAILURE;
@@ -110,6 +116,11 @@ ExitStatus App::Application::run() {
       // NOLINTNEXTLINE
       ImGui::Text("Hello World");
       ImGui::End();
+    }
+
+    // Browser
+    if (m_state.show_browser) {
+      ImGui::ShowBrowserWindow(&m_state.show_browser, ImGui_ImplSDL2_GetCefTexture());
     }
 
     // Rendering

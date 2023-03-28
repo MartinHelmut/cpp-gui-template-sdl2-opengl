@@ -40,6 +40,7 @@ class Application {
     bool running{false};
     bool minimized{false};
     bool show_some_panel{true};
+    bool show_browser{true};
   };
 
   void set_theme() const;
