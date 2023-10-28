@@ -1,33 +1,22 @@
 # Base GUI project setup with SDL2 and OpenGL
 
-C++ gui project template with SDL2 and OpenGL 4.1.
+C++ GUI project template with [SDL2](https://www.libsdl.org) and [Dear ImGUI](https://github.com/ocornut/imgui) with
+OpenGL 4.1.
 
 ![Image of the example app.](example-app.png)
 
-## Setup
+## How to get started
 
-The project uses [CMake](https://cmake.org) and [Ninja](https://ninja-build.org).
+After using this template to create your own repository, it is time to first run and then customize!
 
-Build the application in debug mode:
+- Start here: [Quick Start](docs/QuickStart.md)
+- Continue here: [Usage Guide](docs/README.md)
 
-```shell
-cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -B build/debug
-ninja -C build/debug
-```
+## Other versions
 
-Run the application:
-
-```shell
-cd ./build/debug/src/app && ./App
-```
-
-### Using Litr
-
-When using [Litr](https://github.com/krieselreihe/litr), the quick setup to build and run the application is:
-
-```shell
-litr build,start
-```
+There is also a [SDL2 version using the SDL2 Renderer](https://github.com/MartinHelmut/cpp-gui-template-sdl2) instead of
+OpenGL specifically, but it does not support
+multi-viewports or detached widgets.
 
 ## Disclaimer
 

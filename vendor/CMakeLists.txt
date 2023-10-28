@@ -3,14 +3,14 @@ include(FetchContent)
 FetchContent_Declare(
   doctest
   GIT_REPOSITORY "https://github.com/onqtam/doctest.git"
-  GIT_TAG v2.4.9
+  GIT_TAG v2.4.11
 )
 add_subdirectory(doctest)
 
 FetchContent_Declare(
   fmt
   GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
-  GIT_TAG 9.1.0
+  GIT_TAG 10.1.1
 )
 add_subdirectory(fmt)
 
@@ -24,20 +24,20 @@ add_subdirectory(glad)
 FetchContent_Declare(
   imgui
   GIT_REPOSITORY "https://github.com/ocornut/imgui.git"
-  GIT_TAG c191faf0ba478e9c58a69c63306986a21ebfb6e4 # docking-latest
+  GIT_TAG 72ebd91567148b4d3dca073c7229c4c0462a0586 # Branch: docking, date: 05.10.2023, 15:10 GMT+2
 )
 add_subdirectory(imgui)
 
 FetchContent_Declare(
   SDL2
   GIT_REPOSITORY "https://github.com/libsdl-org/SDL.git"
-  GIT_TAG release-2.26.1
+  GIT_TAG release-2.28.4
 )
 add_subdirectory(sdl)
 
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
-  GIT_TAG v1.11.0
+  GIT_TAG v1.12.0
 )
 add_subdirectory(spdlog)

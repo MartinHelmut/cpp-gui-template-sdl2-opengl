@@ -4,7 +4,7 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
 
   # Set the possible values of build type for cmake-gui, ccmake
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
 endif ()
 
 find_program(CCACHE ccache)
@@ -21,11 +21,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(DEACTIVATE_LOGGING "Disable logging" OFF)
 if (DEACTIVATE_LOGGING)
   add_compile_definitions(APP_DEACTIVATE_LOGGING)
-endif ()
-
-option(TRACE "Enable detailed execution flow tracing" OFF)
-if (TRACE)
-  add_compile_definitions(TRACE)
 endif ()
 
 option(DEBUG "Enable debug statements and asserts" OFF)
