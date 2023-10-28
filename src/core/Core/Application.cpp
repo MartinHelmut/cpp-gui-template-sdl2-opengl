@@ -1,22 +1,32 @@
-/*
- * Copyright (c) 2022 Martin Helmut Fieber <info@martin-fieber.se>
- */
-
 #include "Application.hpp"
 
+#include <SDL.h>
+#include <SDL_error.h>
+#include <SDL_events.h>
+#include <SDL_filesystem.h>
+#include <SDL_video.h>
 #include <backends/imgui_impl_opengl3.h>
-#include <backends/imgui_impl_sdl.h>
+#include <backends/imgui_impl_sdl2.h>
 #include <glad/glad.h>
 #include <imgui.h>
 
-#include "Core/Instrumentor.hpp"
+#include <memory>
+#include <string>
+
+#include "Core/DPIHandler.hpp"
+#include "Core/Debug/Instrumentor.hpp"
+#include "Core/Log.hpp"
+#include "Core/Resources.hpp"
+#include "Core/Window.hpp"
+#include "Settings/Project.hpp"
 
 namespace App {
 
 Application::Application(const std::string& title) {
   APP_PROFILE_FUNCTION();
 
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
+  const unsigned int init_flags{SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER};
+  if (SDL_Init(init_flags) != 0) {
     APP_ERROR("Error: %s\n", SDL_GetError());
     m_exit_status = ExitStatus::FAILURE;
   }
@@ -26,17 +36,7 @@ Application::Application(const std::string& title) {
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-  m_window = std::make_shared<Window>(Window::Settings{title});
-
-  // Setup Dear ImGui context
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-
-  set_theme();
-
-  // Setup Platform/Renderer backends
-  ImGui_ImplSDL2_InitForOpenGL(m_window->get_native_window(), m_window->get_native_context());
-  ImGui_ImplOpenGL3_Init("#version 410 core");
+  m_window = std::make_unique<Window>(Window::Settings{title});
 }
 
 Application::~Application() {
@@ -56,15 +56,43 @@ ExitStatus App::Application::run() {
     return m_exit_status;
   }
 
-  m_state.running = true;
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io{ImGui::GetIO()};
 
-  const ImGuiIO& io{ImGui::GetIO()};
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable |
+                    ImGuiConfigFlags_ViewportsEnable;
 
-  while (m_state.running) {
+  // @info: https://github.com/ocornut/imgui/issues/2361
+  io.ConfigDockingTransparentPayload = true;
+
+  const std::string user_config_path{SDL_GetPrefPath(COMPANY_NAMESPACE.c_str(), APP_NAME.c_str())};
+  APP_DEBUG("User config path: {}", user_config_path);
+
+  // Absolute imgui.ini path to preserve settings independent of app location.
+  static const std::string imgui_ini_filename{user_config_path + "imgui.ini"};
+  io.IniFilename = imgui_ini_filename.c_str();
+
+  // ImGUI font
+  const float font_scaling_factor{DPIHandler::get_scale()};
+  const float font_size{18.0F * font_scaling_factor};
+  const std::string font_path{Resources::font_path("Manrope.ttf").generic_string()};
+
+  io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);
+  io.FontDefault = io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);
+  DPIHandler::set_global_font_scaling(&io);
+
+  // Setup Platform/Renderer backends
+  ImGui_ImplSDL2_InitForOpenGL(m_window->get_native_window(), m_window->get_native_context());
+  ImGui_ImplOpenGL3_Init("#version 410 core");
+
+  m_running = true;
+  while (m_running) {
     APP_PROFILE_SCOPE("MainLoop");
 
     SDL_Event event{};
-    while (SDL_PollEvent(&event) != 0) {
+    while (SDL_PollEvent(&event) == 1) {
       APP_PROFILE_SCOPE("EventPolling");
 
       ImGui_ImplSDL2_ProcessEvent(&event);
@@ -84,7 +112,7 @@ ExitStatus App::Application::run() {
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    if (!m_state.minimized) {
+    if (!m_minimized) {
       ImGui::DockSpaceOverViewport();
 
       if (ImGui::BeginMainMenuBar()) {
@@ -95,24 +123,43 @@ ExitStatus App::Application::run() {
           ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {
-          ImGui::MenuItem("Some Panel", nullptr, &m_state.show_some_panel);
+          ImGui::MenuItem("Some Panel", nullptr, &m_show_some_panel);
+          ImGui::MenuItem("ImGui Demo Panel", nullptr, &m_show_demo_panel);
+          ImGui::MenuItem("Debug Panel", nullptr, &m_show_debug_panel);
           ImGui::EndMenu();
         }
 
         ImGui::EndMainMenuBar();
       }
-    }
 
-    // Whatever GUI to implement here ...
-    if (m_state.show_some_panel) {
-      ImGui::Begin("Some panel", &m_state.show_some_panel);
-      // NOLINTNEXTLINE
-      ImGui::Text("Hello World");
-      ImGui::End();
+      // Whatever GUI to implement here ...
+      if (m_show_some_panel) {
+        ImGui::Begin("Some panel", &m_show_some_panel);
+        ImGui::Text("Hello World");
+        ImGui::End();
+      }
+
+      // ImGUI demo panel
+      if (m_show_demo_panel) {
+        ImGui::ShowDemoWindow(&m_show_demo_panel);
+      }
+
+      // Debug panel
+      if (m_show_debug_panel) {
+        ImGui::Begin("Debug panel", &m_show_debug_panel);
+        ImGui::Text("User config path: %s", user_config_path.c_str());
+        ImGui::Separator();
+        ImGui::Text("Font path: %s", font_path.c_str());
+        ImGui::Text("Font size: %f", font_size);
+        ImGui::Text("Global font scaling %f", io.FontGlobalScale);
+        ImGui::Text("UI scaling factor: %f", font_scaling_factor);
+        ImGui::End();
+      }
     }
 
     // Rendering
     ImGui::Render();
+
     glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));
     glClearColor(0.5F, 0.5F, 0.5F, 1.00F);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -133,12 +180,10 @@ ExitStatus App::Application::run() {
 }
 
 void App::Application::stop() {
-  m_state.running = false;
+  m_running = false;
 }
 
 void Application::on_event(const SDL_WindowEvent& event) {
-  APP_PROFILE_FUNCTION();
-
   switch (event.event) {
     case SDL_WINDOWEVENT_CLOSE:
       return on_close();
@@ -146,62 +191,22 @@ void Application::on_event(const SDL_WindowEvent& event) {
       return on_minimize();
     case SDL_WINDOWEVENT_SHOWN:
       return on_shown();
-    case SDL_WINDOWEVENT_RESIZED:
-      return on_resize(event);
+    default:
+      // Do nothing otherwise
+      return;
   }
 }
 
-// Can be static, but will serve as an example call, so ignore.
-// NOLINTNEXTLINE
-void Application::on_resize([[maybe_unused]] const SDL_WindowEvent& event) {
-  APP_DEBUG("RESIZE {} {}", event.data1, event.data2);
-}
-
 void Application::on_minimize() {
-  m_state.minimized = true;
+  m_minimized = true;
 }
 
 void Application::on_shown() {
-  m_state.minimized = false;
+  m_minimized = false;
 }
 
 void Application::on_close() {
   stop();
-}
-
-void Application::set_theme() const {
-  APP_PROFILE_FUNCTION();
-
-  ImGuiIO& io{ImGui::GetIO()};
-  ImGuiStyle& style{ImGui::GetStyle()};
-
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable |
-                    ImGuiConfigFlags_ViewportsEnable;
-
-  // ImGui font
-  const float font_scaling_factor{m_window->get_scale()};
-  const float font_size{18.0F * font_scaling_factor};
-
-  io.Fonts->AddFontFromFileTTF("assets/fonts/Manrope/Manrope-Regular.ttf", font_size);
-  io.FontDefault =
-      io.Fonts->AddFontFromFileTTF("assets/fonts/Manrope/Manrope-Regular.ttf", font_size);
-  io.FontGlobalScale = 1.0F / font_scaling_factor;
-
-  style.WindowRounding = 5.3F;
-  style.GrabRounding = style.FrameRounding = 2.3F;
-  style.ScrollbarRounding = 5.0F;
-  style.FrameBorderSize = 1.0F;
-  style.ItemSpacing.y = 6.5F;
-
-  if ((io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0) {
-    style.WindowRounding = 0.0F;
-    style.Colors[ImGuiCol_WindowBg].w = 1.0F;
-  }
-
-  // Theme setup ...
-  // auto* colors{static_cast<ImVec4*>(style.Colors)};
-  // colors[ImGuiCol_Text] = {0.73333335F, 0.73333335F, 0.73333335F, 1.00F};
-  // ...
 }
 
 }  // namespace App

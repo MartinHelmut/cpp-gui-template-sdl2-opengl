@@ -1,12 +1,12 @@
-/*
- * Copyright (c) 2022 Martin Helmut Fieber <info@martin-fieber.se>
- */
-
 #include "Log.hpp"
 
+#include <spdlog/common.h>
+#include <spdlog/logger.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
+#include <memory>
 #include <vector>
 
 namespace App {
@@ -14,11 +14,7 @@ namespace App {
 Log::Log() {
   std::vector<spdlog::sink_ptr> log_sinks;
 
-#ifdef TRACE
-  const spdlog::level::level_enum level{spdlog::level::trace};
-#else
   const spdlog::level::level_enum level{spdlog::level::debug};
-#endif
 
   log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
   log_sinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("app.log", true));

@@ -41,7 +41,7 @@ function(set_project_warnings project_name)
   set(CLANG_WARNINGS
     -Wall
     -Wextra # reasonable and standard
-    # -Wshadow # warn the user if a variable declaration shadows one from a
+    -Wshadow # warn the user if a variable declaration shadows one from a
     # parent context
     -Wnon-virtual-dtor # warn the user if a class with virtual functions has a
     # non-virtual destructor. This helps catch hard to
@@ -56,9 +56,6 @@ function(set_project_warnings project_name)
     -Wnull-dereference # warn if a null dereference is detected
     -Wformat=2 # warn on security issues around functions that format output
     # (ie printf)
-    # @todo: Temporarily deactivated for SDL2
-    # -Wdouble-promotion # warn if float is implicit promoted to double
-    # -Wold-style-cast # warn for c-style casts
     )
 
   if (WARNINGS_AS_ERRORS)
@@ -69,7 +66,7 @@ function(set_project_warnings project_name)
   set(GCC_WARNINGS
     ${CLANG_WARNINGS}
     -Wmisleading-indentation # warn if indentation implies blocks where blocks
-    # @todo: Currently not supported in CI due to an old gcc version.
+    # @todo: Somehow those make problems in some versions of Clang in Windows. So I deactivate them for now.
     # -Wduplicated-branches # warn if if / else branches have duplicated code
     # -Wduplicated-cond # warn if if / else chain has duplicated conditions
     # -Wlogical-op # warn about logical operations being used where bitwise were
