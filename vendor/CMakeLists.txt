@@ -24,7 +24,7 @@ add_subdirectory(glad)
 FetchContent_Declare(
   imgui
   GIT_REPOSITORY "https://github.com/ocornut/imgui.git"
-  GIT_TAG 72ebd91567148b4d3dca073c7229c4c0462a0586 # Branch: docking, date: 05.10.2023, 15:10 GMT+2
+  GIT_TAG 37ea320b96a4b77581986f5581707021a7be94c9 # Branch: docking, date: 07.11.2023, 08:20 GMT+1
 )
 add_subdirectory(imgui)
 
