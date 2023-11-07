@@ -15,8 +15,7 @@ After using this template to create your own repository, it is time to first run
 ## Other versions
 
 There is also a [SDL2 version using the SDL2 Renderer](https://github.com/MartinHelmut/cpp-gui-template-sdl2) instead of
-OpenGL specifically, but it does not support
-multi-viewports or detached widgets.
+OpenGL specifically, but it does not support multi-viewports or detached widgets.
 
 ## Disclaimer
 
