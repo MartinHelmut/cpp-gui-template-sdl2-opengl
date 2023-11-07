@@ -14,6 +14,7 @@ This is the user guide for the template and how to adapt it to your own needs.
 - [Logging](Logging.md)
 - [Dependencies](Dependencies.md)
 - [Packaging](Packaging.md)
+- [CMake presets](CMakePresets.md)
 - [Platform dependent code](PlatformCode.md)
 - [Application Icons](ApplicationIcons.md)
 - [Fonts](Fonts.md)
@@ -59,7 +60,7 @@ git gc --prune=now
 
 The project uses [CMake](https://cmake.org) version >=3.22.
 
-### Ninja or XCode
+### Ninja or Xcode
 
 Depending on the operating system, the project uses either [Ninja](https://ninja-build.org) version >=1 for Windows and
-Linux, or XCode version >=13 on macOS.
+Linux, or Xcode version >=13 on macOS.
