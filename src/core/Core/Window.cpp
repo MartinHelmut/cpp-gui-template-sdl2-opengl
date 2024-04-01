@@ -1,6 +1,6 @@
 #include "Window.hpp"
 
-#include <SDL_video.h>
+#include <SDL2/SDL.h>
 #include <glad/glad.h>
 
 #include "Core/DPIHandler.hpp"
@@ -49,10 +49,14 @@ Window::~Window() {
 }
 
 SDL_Window* Window::get_native_window() const {
+  APP_PROFILE_FUNCTION();
+
   return m_window;
 }
 
 SDL_GLContext Window::get_native_context() const {
+  APP_PROFILE_FUNCTION();
+
   return m_gl_context;
 }
 

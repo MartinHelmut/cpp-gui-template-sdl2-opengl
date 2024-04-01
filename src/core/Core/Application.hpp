@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include <memory>
 #include <string>
@@ -10,7 +10,7 @@
 
 namespace App {
 
-enum class ExitStatus : int { SUCCESS = 0, FAILURE = 1 };
+enum class ExitStatus : std::uint8_t { SUCCESS = 0, FAILURE = 1 };
 
 class Application {
  public:
