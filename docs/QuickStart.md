@@ -4,6 +4,7 @@ Having all [requirements](README.md#requirements) set, here you can find how to 
 
 ## Table of contents
 
+- [TL;DR](#tldr)
 - [Build](#build)
 - [Execute](#execute)
   - [macOS](#macos)
@@ -11,6 +12,24 @@ Having all [requirements](README.md#requirements) set, here you can find how to 
   - [Linux](#linux)
 - [Distribution](#distribution)
 - [Tests](#tests)
+
+## TL;DR
+
+> [!IMPORTANT]
+> Workflow presets are only available in CMake version 3.25 and up.
+
+The quickest way possible to get an actual distributable from zero is using the available CMake workflows. For Linux and
+Windows:
+
+```shell
+cmake --workflow --preset dist
+```
+
+And for macOS with Xcode:
+
+```shell
+cmake --workflow --preset xcode-dist
+```
 
 ## Build
 
@@ -30,12 +49,14 @@ cmake -GNinja -DCMAKE_BUILD_TYPE=Release -B build/release
 cmake --build build/release
 ```
 
-On macOS Xcode should be used as generator via `-GXCode`. For example creating a release build with XCode.
+On macOS Xcode should be used as generator via `-GXcode`. For example creating a release build with XCode. It is also
+necessary to specify the Apple architecture via `CMAKE_OSX_ARCHITECTURES`, for example for a universal executable using
+the value `x86_64;arm64"`.
 
 ```shell
-# Using Xcode
-cmake -GXcode -DCMAKE_BUILD_TYPE=Release -B build/xcode
-cmake --build build/xcode
+# Using Xcode, create universal executable
+cmake -GXcode -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -B build/xcode
+cmake --build build/xcode --config Release
 ```
 
 ## Execute
